@@ -49,7 +49,17 @@
         <!-- 结束已预约页面 -->
 
         <!-- 空余中页面 -->
-        <el-tab-pane label="空余中" name="fourth">定时任务补偿</el-tab-pane>
+        <el-tab-pane label="空余中" name="fourth">
+            <el-row class="table_empty">
+                <el-col :span="4" v-for="(table,index) in getTable_empty " :key="index">
+                        
+                    <li class="table-item" :class="table.status" @click="controlTable(table)">   
+                        <span >{{ table.id}}</span>
+                    </li>
+                        
+                </el-col>
+            </el-row>
+        </el-tab-pane>
         <!-- 结束空余中页面 -->
 
     </el-tabs>
@@ -70,8 +80,8 @@
             </p>
 
             <div class="reserved_btn" v-if="!table_isUsing" @click="close_controlDialog">
-                <el-button class="onReserved" @click="$store.commit('onReserved',activeTableNumber)" v-if="!this.table_hasReserved">预约餐桌</el-button>
-                <el-button @click="$store.commit('onEmpty',activeTableNumber)" v-if="this.table_hasReserved">取消预约</el-button>
+                <el-button class="onReserved" @click="$store.commit('ON_Reserved',activeTableNumber)" v-if="!this.table_hasReserved">预约餐桌</el-button>
+                <el-button @click="$store.commit('ON_Empty',activeTableNumber)" v-if="this.table_hasReserved">取消预约</el-button>
             </div>
             
             <el-button v-if="!this.table_isUsing" type="primary" @click="controlOrder">立即点餐</el-button>
@@ -155,7 +165,22 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getTable_all","getTable_using","getTable_reserved"])
+    ...mapGetters(["getTable_all"]),
+    getTable_using(){
+        return this.$store.getters.getTable_all.filter(function(table){
+            return table.status=="using"
+        });
+    },
+    getTable_reserved(){
+        return this.$store.getters.getTable_all.filter(function(table){
+            return table.status=="reserved"
+        });
+    },
+    getTable_empty(){
+        return this.$store.getters.getTable_all.filter(function(table){
+            return table.status=="empty"
+        });
+    }
   }
 };
 </script>
