@@ -67,7 +67,7 @@
 
     <!-- 餐桌操作对话框 -->
     <el-dialog
-    :title="activeTable"
+    :title="this.activeTableNumber+'号餐桌操作'"
     :visible.sync="showControl"
     width="30%"
     center class="tableControl_dialog">
@@ -97,9 +97,13 @@
     <el-dialog
     :visible.sync="showOrder"
     width="100%"
-    center class="order_dialog">
+    top="10vh"
+    center class="order_dialog"
+    :show-close="false"
+    :close-on-click-modal="false"
+    :title="this.activeTableNumber+'号餐桌点餐中'">
         <slot>
-            <order-page></order-page>
+            <order-page @order_close="controlOrder" @order_success="table_orderSuccess"></order-page>
         </slot>
     </el-dialog>
 
@@ -119,8 +123,6 @@ export default {
       showControl: false,
     // 是否显示点餐操作对话框
       showOrder:false,
-    // 当前餐桌的操作对话框标题
-      activeTable: "",
     // 当前操作的餐桌Number
       activeTableNumber: 0,
     // tablePage选项卡默认选项
@@ -130,7 +132,9 @@ export default {
     // 当前餐桌是否已预约
       table_hasReserved:false,
     // 当前餐桌是否使用中
-      table_isUsing:false
+      table_isUsing:false,
+    // 当前餐桌订单
+      orderList:[],
     };
   },
   methods: {
@@ -140,8 +144,6 @@ export default {
         this.showControl = true;
     // 获取当前选中的餐桌Number
         this.activeTableNumber = table.id;
-    // 返回控制对话框的标题
-        this.activeTable = this.activeTableNumber + "号餐桌操作";
     // 获取当前选中餐桌的状态
         this.table_status = table.status;
     // 控制是否显示预约按钮
@@ -157,15 +159,27 @@ export default {
             this.table_hasReserved = false;
         }
     },
+    table_orderSuccess(orderlist){
+        this.orderList=orderlist;
+        let payload=[this.activeTableNumber].concat(this.orderList);
+        this.$store.commit('ON_Order',payload);
+        this.$store.commit('ON_Using',this.activeTableNumber);
+        this.showControl=false;
+
+    },
     controlOrder(){
-        this.showOrder = true;
+        if(this.showOrder){
+            this.showOrder = false;
+        }else{
+            this.showOrder = true;
+        }  
     },
     close_controlDialog(){
         this.showControl = false;
     }
   },
   computed: {
-    ...mapGetters(["getTable_all"]),
+    ...mapGetters(["getTable_all","getTable"]),
     getTable_using(){
         return this.$store.getters.getTable_all.filter(function(table){
             return table.status=="using"
@@ -180,7 +194,7 @@ export default {
         return this.$store.getters.getTable_all.filter(function(table){
             return table.status=="empty"
         });
-    }
+    },
   }
 };
 </script>

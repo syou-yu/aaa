@@ -5,3 +5,7 @@ export const getTable_all = (state) => {
 export const getGoods = (state) => {
     return state.goods;
 };
+
+export const getTable = (state) => (index) => {
+    return state.table[index - 1];
+};

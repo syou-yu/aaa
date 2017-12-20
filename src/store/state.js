@@ -1,15 +1,15 @@
 const state = {
     table: [
-        { id: 1, status: 'using' },
-        { id: 2, status: 'empty' },
-        { id: 3, status: 'reserved' },
-        { id: 4, status: 'empty' },
-        { id: 5, status: 'empty' },
-        { id: 6, status: 'empty' },
-        { id: 7, status: 'empty' },
-        { id: 8, status: 'empty' },
-        { id: 9, status: 'empty' },
-        { id: 10, status: 'empty' }
+        { id: 1, status: 'using', orderlist: [] },
+        { id: 2, status: 'empty', orderlist: [] },
+        { id: 3, status: 'reserved', orderlist: [] },
+        { id: 4, status: 'empty', orderlist: [] },
+        { id: 5, status: 'empty', orderlist: [] },
+        { id: 6, status: 'empty', orderlist: [] },
+        { id: 7, status: 'empty', orderlist: [] },
+        { id: 8, status: 'empty', orderlist: [] },
+        { id: 9, status: 'empty', orderlist: [] },
+        { id: 10, status: 'empty', orderlist: [] }
     ],
     goods: [{
             goodsName: "椰汁凉粉",
