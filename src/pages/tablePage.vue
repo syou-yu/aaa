@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>this is tablePage</h1>
+    <h1>餐桌管理</h1>
     <!-- 选项卡 -->
     <el-tabs v-model="activeName" type="card">
 
@@ -78,7 +78,16 @@
                 <span v-if="this.table_hasReserved" class="reserved">已预约</span>
                 <span v-if="!this.table_isUsing&&!this.table_hasReserved" class="empty">空余中</span>
             </p>
-
+            <!-- 已点菜品列表 -->
+                <el-table :data="getOrder" max-height="250" 
+                show-summary :summary-method="getSummaries"
+                v-if="table_isUsing"
+                style="margin-bottom:20px;">
+                    <el-table-column prop="goodsName" label="商品名称" align="center"></el-table-column>
+                    <el-table-column prop="count" label="数量" align="center"></el-table-column>
+                    <el-table-column prop="price" label="金额（元）" align="center"></el-table-column>
+                </el-table>
+            <!-- 结束已点菜品列表 -->
             <div class="reserved_btn" v-if="!table_isUsing" @click="close_controlDialog">
                 <el-button class="onReserved" @click="$store.commit('ON_Reserved',activeTableNumber)" v-if="!this.table_hasReserved">预约餐桌</el-button>
                 <el-button @click="$store.commit('ON_Empty',activeTableNumber)" v-if="this.table_hasReserved">取消预约</el-button>
@@ -86,6 +95,7 @@
             
             <el-button v-if="!this.table_isUsing" type="primary" @click="controlOrder">立即点餐</el-button>
             <el-button v-if="this.table_isUsing" type="primary" >结账</el-button>
+            <el-button v-if="this.table_isUsing" @click="controlOrder">继续点餐</el-button>
 
             
 
@@ -103,7 +113,10 @@
     :close-on-click-modal="false"
     :title="this.activeTableNumber+'号餐桌点餐中'">
         <slot>
-            <order-page @order_close="controlOrder" @order_success="table_orderSuccess"></order-page>
+            <order-page 
+            @order_close="controlOrder" 
+            @order_success="table_orderSuccess"
+            :orderlist="getOrder"></order-page>
         </slot>
     </el-dialog>
 
@@ -176,10 +189,39 @@ export default {
     },
     close_controlDialog(){
         this.showControl = false;
+    },
+    //   已点菜单合计
+    getSummaries(param){
+        const { columns, data } = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '总价';
+            return;
+          }
+          const values = data.map(item => Number(item[column.property]));
+          if (!values.every(value => isNaN(value))) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr);
+              if (!isNaN(value)) {
+                return prev + curr;
+              } else {
+                return prev;
+              }
+            }, 0);
+            sums[2] += ' 元';
+          } else {
+            sums[index] = 'N/A';
+          }
+        });
+
+        return sums;
+
     }
   },
+
   computed: {
-    ...mapGetters(["getTable_all","getTable"]),
+    ...mapGetters(["getTable_all"]),
     getTable_using(){
         return this.$store.getters.getTable_all.filter(function(table){
             return table.status=="using"
@@ -195,6 +237,16 @@ export default {
             return table.status=="empty"
         });
     },
+    getOrder(){
+        let activeIndex=0;
+        if(this.activeTableNumber==0){
+            activeIndex=0;
+        }else{
+            activeIndex=this.activeTableNumber-1
+        }
+        return this.$store.getters.getTable(activeIndex);
+    },
+
   }
 };
 </script>

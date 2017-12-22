@@ -1,7 +1,6 @@
 <template>
   <div>
       <el-row type="flex" justify="space-around">
-        
         <el-col :span="8">
         <!-- 点餐已选商品列表 -->
           <el-table :data="orderList" style="width: 100%" max-height="300">
@@ -24,8 +23,6 @@
         </div>
         <!-- 结束操作按钮 -->
         </el-col>
-        
-
 
         <!-- 商品菜单 -->
         <el-col :span="16" >
@@ -73,10 +70,9 @@
 <script>
 import { mapGetters } from "vuex"
 export default {
-
   data(){
     return{
-      orderList:[]
+     orderList:[],
     }
   },
   methods:{
@@ -102,9 +98,9 @@ export default {
     },
     // 清空订单
     orderList_del(){
-      this.orderList=[];
       //主动触发close_order方法,向tablePage提示关闭order_dialog
       this.$emit('order_close')
+      this.orderList=[];
       this.$message({
           message: '点餐取消！',
           type: 'error'
@@ -113,8 +109,8 @@ export default {
     // 完成点餐
     orderList_success(){
       this.$emit('order_success',this.orderList);
-      this.orderList=[];
       this.$emit('order_close')
+      this.orderList=[];
       this.$message({
           message: '点餐成功！',
           type: 'success'
