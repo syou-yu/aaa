@@ -1,6 +1,6 @@
 const state = {
     table: [
-        { id: 1, status: 'using', orderlist: [] },
+        { id: 1, status: 'empty', orderlist: [] },
         { id: 2, status: 'empty', orderlist: [] },
         { id: 3, status: 'reserved', orderlist: [] },
         { id: 4, status: 'empty', orderlist: [] },
@@ -41,7 +41,8 @@ const state = {
             category: "糕点系列",
             price: 16
         }
-    ]
+    ],
+    orders: []
 
 };
 

@@ -64,7 +64,7 @@
 
     </el-tabs>
     <!-- 结束选项卡 -->
-
+    
     <!-- 餐桌操作对话框 -->
     <el-dialog
     :title="this.activeTableNumber+'号餐桌操作'"
@@ -94,10 +94,8 @@
             </div>
             
             <el-button v-if="!this.table_isUsing" type="primary" @click="controlOrder">立即点餐</el-button>
-            <el-button v-if="this.table_isUsing" type="primary" >结账</el-button>
+            <el-button v-if="this.table_isUsing" type="primary" @click="showCheckout = true">结账</el-button>
             <el-button v-if="this.table_isUsing" @click="controlOrder">继续点餐</el-button>
-
-            
 
         </slot>
     </el-dialog>
@@ -120,15 +118,25 @@
         </slot>
     </el-dialog>
 
+    <!-- 结账操作对话框 -->
+    <el-dialog
+    :visible.sync="showCheckout"
+    width="50%">
+        <checkout @close_checkout="checkout" :totalPrice="this.totalPrice" :activeTableNumber="this.activeTableNumber"></checkout>
+    </el-dialog>
+    
+
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import orderPage from '../components/order'
+import checkout from '../components/checkout'
 export default {
     components:{
-        'order-page':orderPage
+        'order-page':orderPage,
+        'checkout':checkout
     },
   data() {
     return {
@@ -136,6 +144,8 @@ export default {
       showControl: false,
     // 是否显示点餐操作对话框
       showOrder:false,
+    // 是否显示结账操作对话框 
+      showCheckout:false,
     // 当前操作的餐桌Number
       activeTableNumber: 0,
     // tablePage选项卡默认选项
@@ -148,6 +158,8 @@ export default {
       table_isUsing:false,
     // 当前餐桌订单
       orderList:[],
+    // 订单总额
+      totalPrice:0,
     };
   },
   methods: {
@@ -172,6 +184,7 @@ export default {
             this.table_hasReserved = false;
         }
     },
+    // 完成点单
     table_orderSuccess(orderlist){
         this.orderList=orderlist;
         let payload=[this.activeTableNumber].concat(this.orderList);
@@ -180,6 +193,7 @@ export default {
         this.showControl=false;
 
     },
+    // 控制点菜页面
     controlOrder(){
         if(this.showOrder){
             this.showOrder = false;
@@ -187,6 +201,7 @@ export default {
             this.showOrder = true;
         }  
     },
+    // 关闭操作框
     close_controlDialog(){
         this.showControl = false;
     },
@@ -214,9 +229,20 @@ export default {
             sums[index] = 'N/A';
           }
         });
-
+        this.totalPrice = sums[2];
         return sums;
 
+    },
+    // 控制结账页面
+    checkout(){
+        if(this.showCheckout){
+            this.showCheckout=false;
+            this.showControl = false;
+            this.$store.commit('ON_Empty',this.activeTableNumber);
+        }else{
+            this.showCheckout=true;
+        }
+        
     }
   },
 
@@ -244,7 +270,7 @@ export default {
         }else{
             activeIndex=this.activeTableNumber-1
         }
-        return this.$store.getters.getTable(activeIndex);
+        return this.$store.getters.getOrderlist(activeIndex);
     },
 
   }

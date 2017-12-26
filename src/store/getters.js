@@ -9,6 +9,10 @@ export const getGoods = (state) => {
 // export const getTable = (state, getters) => (id) => {
 //     return state.table[id - 1].orderlist;
 // };
-export const getTable = (state) => (index) => {
-    return state.table[index].orderlist
+export const getOrderlist = (state) => (index) => {
+    return state.table[index].orderlist;
+}
+
+export const getOrders = (state) => {
+    return state.orders;
 }

@@ -11,6 +11,7 @@
         <i class="iconfont icon-canzhuo1"></i>
         <span slot="title">餐桌</span>
     </el-menu-item>
+
     <el-menu-item index="/total">
         <i class="iconfont icon-tongji1"></i>
         <span slot="title">统计</span>
@@ -33,7 +34,7 @@
         // 获取当前url的path值
         urlIndex(){
             return this.$route.path;
-        }
+        },
     },
   }
 </script>
@@ -55,5 +56,8 @@
     font-size:18px;
     font-weight: bold;
     text-shadow: 1px 1px 1px #888888;
+}
+.badge {
+  
 }
 </style>

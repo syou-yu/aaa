@@ -40,10 +40,25 @@ const mutations = {
             // 在数组删除以重复的商品
             let noRepeatItem = order.splice(repeatGoods + 1, 1);
             active_table.orderlist = active_table.orderlist.concat(noRepeatItem);
+        } else if (!hasGoods) {
+            active_table.orderlist = active_table.orderlist.concat(order);
         }
-
-
     },
+    [types.ADD_orders](state, payload) {
+        let now = new Date();
+        let year = now.getFullYear(),
+            month = now.getMonth() + 1,
+            day = now.getDate(),
+            hours = now.getHours(),
+            minutes = now.getMinutes();
+        let time = year + "/" + month + "/" + day + " " + hours + ":" + minutes;
+        let orders = {
+            order: state.table[payload].orderlist,
+            time: time
+        }
+        state.orders.push(orders);
+        state.table[payload].orderlist = [];
+    }
 }
 
 export default mutations;
